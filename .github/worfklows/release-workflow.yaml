@@ -1,14 +1,9 @@
 name: Release Workflow
 run-name: Release Workflow
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main", "release-workflow" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:    
+    branches: [ "**" ]
 
 jobs:
   create-release:
@@ -16,6 +11,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh
+
+      - name: Authenticate GitHub CLI
+        run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Create Release Tag
         id: create_tag
@@ -25,13 +26,6 @@ jobs:
           git push origin $TAG_NAME
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.create_tag.outputs.TAG_NAME }}
-          release_name: Release ${{ steps.create_tag.outputs.TAG_NAME }}
-          body: |
-            Release created by GitHub Actions.
-          draft: false
-          prerelease: false
+        run: |
+          TAG_NAME=$(git describe --tags $(git rev-list --tags --max-count=1))
+          gh release create $TAG_NAME --title "Release $TAG_NAME" --notes "Release created by GitHub Actions."
