@@ -3,7 +3,6 @@ run-name: Release Workflow
 
 on:
   push:
-    branches: [ "**" ]
 
 jobs:
   create-release:
