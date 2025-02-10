@@ -2,7 +2,13 @@ name: Release Workflow
 run-name: Release Workflow
 
 on:
-  push:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Create a new release'
+        required: true
+        default: 'true'
+        type: boolean
 
 jobs:
   create-release:
