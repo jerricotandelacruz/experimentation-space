@@ -4,6 +4,9 @@ run-name: Release Workflow
 on:
   push:
 
+permissions:
+  contents: write
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
@@ -17,12 +20,12 @@ jobs:
       - name: Authenticate GitHub CLI
         run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Create Release Tag
-        id: create_tag
-        run: |
-          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
+      # - name: Create Release Tag
+      #   id: create_tag
+      #   run: |
+      #     TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
+      #     git tag $TAG_NAME
+      #     git push origin $TAG_NAME
 
       - name: Create GitHub Release
         run: |
